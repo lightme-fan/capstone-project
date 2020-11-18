@@ -6,6 +6,7 @@ const photo_URL = 'https://raw.githubusercontent.com/bobziroll/scrimba-react-boo
 
 function ContextProvider({children}) {
 	const [ allPhotos, setPhotos ] = useState([]);
+	const [ cartItems, setCartItems ] = useState([])
 
 	async function fetchPhotos() {
 		const res = await fetch(photo_URL)
@@ -23,9 +24,37 @@ function ContextProvider({children}) {
 		}
 	}, [])
 
-	console.log(allPhotos);
+	function toggleFavorite(id) {
+		const newPhotos = allPhotos.map(photo => {
+			if (photo.id === id) {
+				return {
+					...photo,
+					isFavorite: !photo.isFavorite
+				}
+			}
+			return photo;
+		})
+		setPhotos(newPhotos)
+	}
+
+	// function addToCart(photo) {
+	// 	setCartItems([
+	// 		...cartItems,
+	// 		photo			
+	// 	])
+	// 	console.log(cartItems);
+	// }
+	
+	function addToCart(photo) {
+		setCartItems(prevItem => [...prevItem, photo])
+	}
+
+	function removeFromCart(id) {
+		setCartItems(prevItem => prevItem.filter(cartItem => cartItem.id !== id))
+	}
+
 	return (
-		<Context.Provider value={{allPhotos}}>
+		<Context.Provider value={{allPhotos, toggleFavorite, cartItems, addToCart, removeFromCart}}>
 			{children}
 		</Context.Provider>
 	);
